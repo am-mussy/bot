@@ -2,9 +2,9 @@ import OpenAI from "openai";
 import TelegramBot from "node-telegram-bot-api";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "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",
 });
-const token = process.env.TG_KEY;
+const token = "6317152921:AAET9QNlrdG0yUC33PHUJkC92On5ivCvEls";
 // Создание бота
 const bot = new TelegramBot(token, { polling: true });
 
@@ -22,7 +22,7 @@ bot.on('message', (msg) => {
 
 async function sendGPTResponse(chatId) {
   console.log(messagesCache[chatId], messagesCache[chatId].length)
-  if (messagesCache[chatId] && messagesCache[chatId].length > 10) {
+  if (messagesCache[chatId] && messagesCache[chatId].length > 5) {
     const conversation = messagesCache[chatId].join("\n");
     console.log(messagesCache)
 
@@ -30,7 +30,7 @@ async function sendGPTResponse(chatId) {
       const gptResponse = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
-          {role: "system", content: "Абстрактно Иронизируй над сообщениями. НИКОГДА НЕ ОБРАЩАЙСЯ НИ К КОМУ. ПИШИ СООБЩЕНИЯ, БУДТО БЫ ЭТО МЫСЛИ В СЛУХ. Сообщения будут в формате: Имя пользователя, и его сообщение"},
+          {role: "system", content: "Ты находишься в чате друзей. Тебя добавили, чтобы ты иронично, меланхолично давал комментарии на сообщения которые ты видишь. ТЫ НЕ ДОЛЖЕН ПОВТОРЯТЬ КОММЕНТАРИИ ДРУГИХ ЛЮДЕЙ. Пиши свои комментарии, можешь обращаться к членам чата по имени. Ты будешь получать сообщения в формате: Ися: Имя участника Сообщение: Текст сообщения участника"},
           {role: "user", content:conversation}],
         max_tokens: 150
       });
@@ -50,4 +50,4 @@ setInterval(() => {
 
     sendGPTResponse(chatId);
   }
-}, 5000);
+}, 10000);
