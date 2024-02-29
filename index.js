@@ -17,7 +17,8 @@ bot.on('message', (msg) => {
   if (!messagesCache[chatId]) {
     messagesCache[chatId] = [];
   }
-  messagesCache[chatId].push(`Имя: ${msg.from.first_name} Сообщение: ${text}`);
+
+  if(text) messagesCache[chatId].push(`Имя: ${msg.from.first_name} Сообщение: ${text}`);
 });
 
 async function sendGPTResponse(chatId) {
