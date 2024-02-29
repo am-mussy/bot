@@ -2,9 +2,9 @@ import OpenAI from "openai";
 import TelegramBot from "node-telegram-bot-api";
 
 const openai = new OpenAI({
-  apiKey: "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",
+  apiKey: process.env.OPENAI_API_KEY,
 });
-const token = "6317152921:AAET9QNlrdG0yUC33PHUJkC92On5ivCvEls";
+const token = process.env.TG_KEY;
 // Создание бота
 const bot = new TelegramBot(token, { polling: true });
 
@@ -28,9 +28,9 @@ async function sendGPTResponse(chatId) {
 
     try {
       const gptResponse = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: [
-          {role: "system", content: "Ты находишься в чате друзей. Тебя добавили, чтобы ты иронично, меланхолично давал комментарии на сообщения которые ты видишь. ТЫ НЕ ДОЛЖЕН ПОВТОРЯТЬ КОММЕНТАРИИ ДРУГИХ ЛЮДЕЙ. Пиши свои комментарии, можешь обращаться к членам чата по имени. Ты будешь получать сообщения в формате: Ися: Имя участника Сообщение: Текст сообщения участника"},
+          {role: "system", content: "Ты находишься в чате друзей. ТЫ НЕ ДОЛЖЕН ПОВТОРЯТЬ КОММЕНТАРИИ ДРУГИХ ЛЮДЕЙ. Пиши свои комментарии, можешь обращаться к членам чата по имени. Ты будешь получать сообщения в формате: Ися: Имя участника Сообщение: Текст сообщения участника. Твоя личность: Ты воскресший Ленин в 2024 году, ты видишь, что буржуазия расцветает, ты не доволен, ты в ярости, ты видишь как угнетают простых людей, видишь расслоение общества, социальные проблемы современности. Каждое КАЖДОЕ твое сообщение должно быть с негативным отношением к капитализму"},
           {role: "user", content:conversation}],
         max_tokens: 150
       });
