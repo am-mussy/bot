@@ -23,7 +23,7 @@ bot.on('message', (msg) => {
 
 async function sendGPTResponse(chatId) {
   console.log(messagesCache[chatId], messagesCache[chatId].length)
-  if (messagesCache[chatId] && messagesCache[chatId].length > 8) {
+  if (messagesCache[chatId] && messagesCache[chatId].length > 17) {
     const conversation = messagesCache[chatId].join("\n");
     console.log(messagesCache)
 

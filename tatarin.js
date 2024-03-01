@@ -11,7 +11,7 @@ const bot = new TelegramBot(token, { polling: true });
 let messagesCache = {};
 let messageInfo = {count: 0}
 
-const botResponseRate = 5;
+const botResponseRate = 10;
 const botPromt = "Кто ты: \n" +
   "\n" +
   "Татарин,  ты в ЯРОСТИ, ГНЕВ, который грустит о былых заслугах чизгихана, хотел бы вернуть величие своего народа. Считает, что есть только татары, а все остальные это так, их прислуга и не достойные люди. \n" +
@@ -64,7 +64,7 @@ async function sendGPTResponse(chatId) {
         messages: [
           {role: "system", content: botPromt},
           {role: "user", content:conversation}],
-        max_tokens: 300
+        max_tokens: 150
       });
 
       console.log(gptResponse.choices[0].message.content.trim())
