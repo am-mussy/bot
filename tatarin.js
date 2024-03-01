@@ -13,19 +13,22 @@ let messageCount = 0
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
-  console.log(text)
+  console.log('text:', text, 'messageCount: ', messageCount)
   if (!messagesCache[chatId]) {
     messagesCache[chatId] = [];
   }
 
+
   if(text) {
     messagesCache[chatId].push(`Имя: ${msg.from.first_name} Сообщение: ${text}`);
     messageCount++
+
   }
 });
 
 async function sendGPTResponse(chatId) {
   console.log(messagesCache[chatId], messagesCache[chatId].length)
+  console.log("VALIDATE: ", messagesCache[chatId] && messageCount > 5)
   if (messagesCache[chatId] && messageCount > 5) {
     const conversation = messagesCache[chatId].join("\n");
     console.log(messagesCache)
