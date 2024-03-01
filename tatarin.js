@@ -28,7 +28,7 @@ bot.on('message', (msg) => {
 
 async function sendGPTResponse(chatId) {
   console.log(messagesCache[chatId], messagesCache[chatId].length)
-  console.log("VALIDATE: ", messagesCache[chatId] && messageCount > 5)
+  console.log("VALIDATE: ", messagesCache[chatId] && messageCount > 1)
   if (messagesCache[chatId] && messageCount > 5) {
     const conversation = messagesCache[chatId].join("\n");
     console.log(messagesCache)
