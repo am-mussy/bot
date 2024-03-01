@@ -10,6 +10,8 @@ const bot = new TelegramBot(token, { polling: true });
 
 let messagesCache = {};
 let messageInfo = {count: 0}
+
+
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
@@ -22,7 +24,7 @@ bot.on('message', (msg) => {
   if(text) {
     messagesCache[chatId].push(`Имя: ${msg.from.first_name} Сообщение: ${text}`);
     messageInfo.count++
-
+    console.log('messageInfo.count++')
   }
 });
 
