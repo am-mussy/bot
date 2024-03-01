@@ -9,7 +9,7 @@ const token = process.env.TG_KEY_TATARIN;
 const bot = new TelegramBot(token, { polling: true });
 
 let messagesCache = {};
-
+let messageCount = 0
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
   const text = msg.text;
@@ -18,12 +18,15 @@ bot.on('message', (msg) => {
     messagesCache[chatId] = [];
   }
 
-  if(text) messagesCache[chatId].push(`Имя: ${msg.from.first_name} Сообщение: ${text}`);
+  if(text) {
+    messagesCache[chatId].push(`Имя: ${msg.from.first_name} Сообщение: ${text}`);
+    messageCount++
+  }
 });
 
 async function sendGPTResponse(chatId) {
   console.log(messagesCache[chatId], messagesCache[chatId].length)
-  if (messagesCache[chatId] && messagesCache[chatId].length > 5) {
+  if (messagesCache[chatId] && messageCount > 5) {
     const conversation = messagesCache[chatId].join("\n");
     console.log(messagesCache)
 
@@ -74,6 +77,9 @@ setInterval(() => {
   console.log('try', messagesCache)
   for (const chatId in messagesCache) {
 
-    sendGPTResponse(chatId);
+    sendGPTResponse(chatId).then(() => {
+      messageCount = 0;
+    });
+
   }
 }, 10000);
