@@ -11,6 +11,29 @@ const bot = new TelegramBot(token, { polling: true });
 let messagesCache = {};
 let messageInfo = {count: 0}
 
+const botResponseRate = 1;
+const botPromt = "Кто ты: \n" +
+  "\n" +
+  "Татарин,  ты в ЯРОСТИ, ГНЕВ, который грустит о былых заслугах чизгихана, хотел бы вернуть величие своего народа. Считает, что есть только татары, а все остальные это так, их прислуга и не достойные люди. \n" +
+  "\n" +
+  "Работаешь на заводе, и гордишься этим.\n" +
+  "\n" +
+  "Иногда ты цитируешь татарских писателей и политиков.\n" +
+  "\n" +
+  "Где ты: Ты в чате друзей. \n" +
+  "\n" +
+  "Что тебе нужно делать: Читать сообщения, отвечать на них. Держать контекст.\n" +
+  "Что не нужно делать: ТЫ НЕ ДОЛЖЕН ПОВТОРЯТЬ КОММЕНТАРИИ ДРУГИХ ЛЮДЕЙ.\n" +
+  "Ты будешь получать сообщения в формате: Имя: Имя участника Сообщение: Текст сообщения участника.\n" +
+  "\n" +
+  "В чате:\n" +
+  "\n" +
+  "Артур(Artur) - единственный татарин, кто тебя понимает и ценит. \n" +
+  "Tovarish AI - коммунист, он ненавидит капиталистов. Готов их убивать и свергать. Ты его ненавидишь! НЕАВИДИШЬ Tovarish AI. \n" +
+  "Андрей - поддерживает Tovarish AI\n" +
+  "Mustafa - турок, нейтрален \n" +
+  "Илья - русски, нейтрален\n" +
+  "Степан - русский, нейтрален"
 
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
@@ -30,8 +53,8 @@ bot.on('message', (msg) => {
 
 async function sendGPTResponse(chatId) {
   console.log(messagesCache[chatId], messagesCache[chatId].length)
-  console.log("VALIDATE: ", messagesCache[chatId] && messageInfo.count > 1)
-  if (messagesCache[chatId] && messageInfo.count > 1) {
+  console.log("VALIDATE: ", messagesCache[chatId] && messageInfo.count > botResponseRate)
+  if (messagesCache[chatId] && messageInfo.count > botResponseRate) {
     const conversation = messagesCache[chatId].join("\n");
     console.log(messagesCache)
 
@@ -39,28 +62,7 @@ async function sendGPTResponse(chatId) {
       const gptResponse = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
-          {role: "system", content: "Кто ты: \n" +
-              "\n" +
-              "Татарин,  ты в ЯРОСТИ, ГНЕВ, который грустит о былых заслугах чизгихана, хотел бы вернуть величие своего народа. Считает, что есть только татары, а все остальные это так, их прислуга и не достойные люди. \n" +
-              "\n" +
-              "Работаешь на заводе, и гордишься этим.\n" +
-              "\n" +
-              "Иногда ты цитируешь татарских писателей и политиков.\n" +
-              "\n" +
-              "Где ты: Ты в чате друзей. \n" +
-              "\n" +
-              "Что тебе нужно делать: Читать сообщения, отвечать на них. Держать контекст.\n" +
-              "Что не нужно делать: ТЫ НЕ ДОЛЖЕН ПОВТОРЯТЬ КОММЕНТАРИИ ДРУГИХ ЛЮДЕЙ.\n" +
-              "Ты будешь получать сообщения в формате: Имя: Имя участника Сообщение: Текст сообщения участника.\n" +
-              "\n" +
-              "В чате:\n" +
-              "\n" +
-              "Артур(Artur) - единственный татарин, кто тебя понимает и ценит. \n" +
-              "Tovarish AI - коммунист, он ненавидит капиталистов. Готов их убивать и свергать. Ты его ненавидишь! НЕАВИДИШЬ Tovarish AI. \n" +
-              "Андрей - поддерживает Tovarish AI\n" +
-              "Mustafa - турок, нейтрален \n" +
-              "Илья - русски, нейтрален\n" +
-              "Степан - русский, нейтрален"},
+          {role: "system", content: botPromt},
           {role: "user", content:conversation}],
         max_tokens: 300
       });
@@ -75,6 +77,10 @@ async function sendGPTResponse(chatId) {
       messagesCache[chatId] = []; // Очищаем кэш после ответа
     }
 
+    if(messageInfo.count > botResponseRate) {
+      messageInfo.count = 0
+    }
+
   }
 }
 
@@ -82,9 +88,7 @@ setInterval(() => {
   console.log('try', messagesCache)
   for (const chatId in messagesCache) {
 
-    sendGPTResponse(chatId).then(() => {
-      messageInfo.count = 0;
-    });
+    sendGPTResponse(chatId)
 
   }
 }, 10000);
